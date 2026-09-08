@@ -29,6 +29,29 @@ class Input {
     }
 }
 
+class Row {
+    constructor() {
+        this.stitches = [];
+    }
+
+    addStitch(stitch) {
+        this.stitches.push(stitch);
+    }
+}
+
+class CrochetProject{
+    constructor() {
+        this.rows = [];
+    }
+
+    addRow(){
+        const row = new Row();
+        this.rows.push(row);
+        return row;
+
+    }
+}
+
 //-------------------------------------------STITCH MAKEUP-------------------------------------------------
 
 const stitchTypes = new Set([
@@ -54,36 +77,56 @@ const stitchModifiers = new Set([
 const stitches = {
     ss: {
         name: "slip stitch",
+        type: "ss",
         height: 0
     },
 
     ch: {
         name: "chain",
+        type: "ch",
         height: 0
     },
 
     sc: {
         name: "single crochet",
+        type: "sc",
+        color: "D5C2DF",
         height: 1
+
+        //Maybe add later?
+        //row: 0
+        //psn: 0
+        //width: 0
+        //increases: 0
+        //decreases: 0
+        //UIspecial: false
     },
 
     hdc: {
         name: "half double crochet",
+        type: "hdc",
+        color: "D1D8F0",
         height: 2
     },
 
     dc: {
         name: "double crochet",
+        type: "dc",
+        color: "F3FFED",
         height: 3
     },
 
     tr: {
         name: "treble crochet",
+        type: "tr",
+        color: "FDEFD5",
         height: 4
     },
 
     dtr: {
         name: "double treble crochet",
+        type: "dtr",
+        color: "F0B4C8",
         height: 5
     }
 };
@@ -180,7 +223,6 @@ function parseRow(inn) {
 
     while (!inn.eof()) {
         const instruction = parseInstruction(inn);
-
         patternInstructions.push(instruction);
 
         skip_whitespace(inn);
@@ -196,33 +238,43 @@ function parseRow(inn) {
 }
 
 //-------------------------------------------STITCH TYPES-------------------------------------------------
+function addStitch(row, type, count){
+    for (let i = 0; i < count; i++) {
+        row.addStitch({
+            type: type,
+            height: stitches[type].height
+        });
+    }
+}
 
 function handle_chain(inn){
 
 }
 
-function handle_singleCrochet(inn){
+//I bet I could build this into the switcher directly. TODO
 
+function handle_singleCrochet(inn, row){
+    addStitch(row, "sc", inn.count);
 }
 
-function handle_doubleCrochet(inn){
-
+function handle_doubleCrochet(inn, row){
+    addStitch(row, "dc", inn.count);
 }
 
-function handle_trebleCrochet(inn, amount){
-
+function handle_trebleCrochet(inn, row){
+    addStitch(row, "tr", inn.count);
 }
 
-function handle_halfDoubleCrochet(inn, amount){
-
+function handle_halfDoubleCrochet(inn, row){
+    addStitch(row, "hdc", inn.count);
 }
 
-function handle_doubleTrebleCrochet(inn, amount){
-
+function handle_doubleTrebleCrochet(inn, row){
+    addStitch(row, "dtr", inn.count);
 }
 
-function handle_slipStitch(inn, amount){
-
+function handle_slipStitch(inn, row){
+    addStitch(row, "ss", inn.count);
 }
 
 function handle_bobble(inn, amount){
@@ -247,31 +299,64 @@ function handle_decrease(inn, amount){
 
 //-------------------------------------------SWITCHER-------------------------------------------------
 
-function interpretInstruction(inn){
+function interpretInstruction(inn, row){
     switch(inn.type){
         case "ss":
-            return handle_slipStitch(inn);
+            return handle_slipStitch(inn, row);
         case "ch":
-            return handle_chain(inn);
+            return handle_chain(inn, row);
         case "sc":
-            return handle_singleCrochet(inn);
+            return handle_singleCrochet(inn, row);
         case "dc":
-            return handle_doubleCrochet(inn);
+            return handle_doubleCrochet(inn, row);
         case "tr":
-            return handle_trebleCrochet(inn);
+            return handle_trebleCrochet(inn, row);
         case "hdc":
-            return handle_halfDoubleCrochet(inn);
+            return handle_halfDoubleCrochet(inn, row);
         case "dtr":
-            return handle_doubleTrebleCrochet(inn);
+            return handle_doubleTrebleCrochet(inn, row);
         case "bo":
-            return handle_bobble(inn);
+            return handle_bobble(inn, row);
         case "blo":
-            return handle_backLoopsOnly(inn);
+            return handle_backLoopsOnly(inn, row);
         case "flo":
-            return handle_frontLoopsOnly(inn);
+            return handle_frontLoopsOnly(inn, row);
         case "turn":
-            return handle_turn(inn);
+            return handle_turn(inn, row);
         default:
             throw new Error("Unknown type!");
+    }
+}
+
+function interpretRow(inn) {
+    const row = new Row();
+
+    for (const instruction of inn) {
+        interpretInstruction(instruction, row);
+    }
+
+    return row;
+}
+
+//-------------------------------------------RENDER-------------------------------------------------
+
+function renderGraph(project) {
+    const container = document.getElementById("crochet-grid");
+
+    container.innerHTML = "";
+
+    for (const row of project.rows) {
+        const rowElement = document.createElement("div");
+        rowElement.classList.add("row");
+
+        for (const stitch of row.stitches) {
+            const square = document.createElement("div");
+            square.classList.add("stitch");
+            square.classList.add(`stitch-${stitch.type}`);
+
+            rowElement.appendChild(square);
+        }
+
+        container.appendChild(rowElement);
     }
 }

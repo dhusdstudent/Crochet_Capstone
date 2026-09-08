@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="416c9bec-9cdb-4058-a2f2-884c5a725174" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Front/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Front/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Front/Grid.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Front/parser.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Front/src/CrochetParser/GraphDrawing.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Front/src/CrochetParser/Row.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/Grid.html" beforeDir="false" afterPath="$PROJECT_DIR$/Front/Grid.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/parser.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/parser.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +28,9 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="3Ie51rLOMp8DhJi1cCXOku6ttFc" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -46,6 +41,7 @@
     "DefaultHtmlFileTemplate": "HTML File",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "main",
@@ -74,11 +70,23 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1788111982677</updated>
-      <workItem from="1788111984003" duration="10358000" />
+      <workItem from="1788111984003" duration="14460000" />
+      <workItem from="1788878314043" duration="2043000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
