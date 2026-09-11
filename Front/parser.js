@@ -78,19 +78,21 @@ const stitches = {
     ss: {
         name: "slip stitch",
         type: "ss",
+        color: "#FDE4CF",
         height: 0
     },
 
     ch: {
         name: "chain",
         type: "ch",
+        color: "#8EECF5",
         height: 0
     },
 
     sc: {
         name: "single crochet",
         type: "sc",
-        color: "D5C2DF",
+        color: "#FDE4CF",
         height: 1
 
         //Maybe add later?
@@ -102,31 +104,52 @@ const stitches = {
         //UIspecial: false
     },
 
+    bo: {
+        name: "bobble stitch",
+        type: "bo",
+        color: "#FFCFD2",
+        height: 1
+    },
+
+    blo: {
+        name: "back loops only",
+        type: "blo",
+        color: "#F1C0E8",
+        height: 1
+    },
+
+    flo: {
+        name: "front loops only",
+        type: "flo",
+        color: "#A3C4F3",
+        height: 1
+    },
+
     hdc: {
         name: "half double crochet",
         type: "hdc",
-        color: "D1D8F0",
+        color: "#CFBAF0",
         height: 2
     },
 
     dc: {
         name: "double crochet",
         type: "dc",
-        color: "F3FFED",
+        color: "#A3C4F3",
         height: 3
     },
 
     tr: {
         name: "treble crochet",
         type: "tr",
-        color: "FDEFD5",
+        color: "#98F5E1",
         height: 4
     },
 
     dtr: {
         name: "double treble crochet",
         type: "dtr",
-        color: "F0B4C8",
+        color: "#B9FBC0",
         height: 5
     }
 };
@@ -242,16 +265,17 @@ function addStitch(row, type, count){
     for (let i = 0; i < count; i++) {
         row.addStitch({
             type: type,
-            height: stitches[type].height
+            height: stitches[type].height,
+            color: stitches[type].color
         });
     }
 }
 
-function handle_chain(inn){
-
-}
-
 //I bet I could build this into the switcher directly. TODO
+
+function handle_chain(inn){
+    addStitch(row, "ch", inn.count);
+}
 
 function handle_singleCrochet(inn, row){
     addStitch(row, "sc", inn.count);
@@ -278,24 +302,24 @@ function handle_slipStitch(inn, row){
 }
 
 function handle_bobble(inn, amount){
-
+    addStitch(row, "bo", inn.count);
 }
 
 function handle_backLoopsOnly(inn, amount){
-
+    addStitch(row, "blo", inn.count);
 }
 
 function handle_frontLoopsOnly(inn, amount){
-
+    addStitch(row, "flo", inn.count);
 }
 
-function handle_turn(inn, amount){
-
-}
-
-function handle_decrease(inn, amount){
-
-}
+// function handle_turn(inn, amount){
+//
+// }
+//
+// function handle_decrease(inn, amount){
+//
+// }
 
 //-------------------------------------------SWITCHER-------------------------------------------------
 
@@ -338,25 +362,71 @@ function interpretRow(inn) {
     return row;
 }
 
+function interpretProject(allInst){
+    const proj = new CrochetProject();
+
+    for (const instructions of allInst){
+        const row = proj.addRow();
+
+        for (const instruction of instructions){
+            interpretInstruction(instruction, row);
+        }
+    }
+
+    return proj;
+}
+
+function projectFinal(text){
+    const rows = text.split("\n").map(line => line.trim())
+        .filter(line => line.length > 0);
+
+    const project = new CrochetProject();
+
+    for (const eachRow of rows){
+        const input = new Input(eachRow);
+        const insts = parseRow(input);
+
+        const singleRow = project.addRow();
+
+        for (const instruction of insts){
+            interpretInstruction(instruction, singleRow);
+        }
+    }
+
+    return project;
+}
+
 //-------------------------------------------RENDER-------------------------------------------------
 
 function renderGraph(project) {
-    const container = document.getElementById("crochet-grid");
+    const svg = document.getElementById("crochet-grid");
 
-    container.innerHTML = "";
+    svg.innerHTML = "";
+    const squareSize = 30;
 
-    for (const row of project.rows) {
-        const rowElement = document.createElement("div");
-        rowElement.classList.add("row");
+    for (let rowIndex = 0; rowIndex < project.rows.length; rowIndex++) {
+        const row = project.rows[rowIndex];
 
-        for (const stitch of row.stitches) {
-            const square = document.createElement("div");
-            square.classList.add("stitch");
-            square.classList.add(`stitch-${stitch.type}`);
+        for (let stitchIndex = 0; stitchIndex < row.stitches.length; stitchIndex++) {
+            const stitch = row.stitches[stitchIndex];
 
-            rowElement.appendChild(square);
+            const square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+            square.setAttribute("x", stitchIndex * squareSize);
+            square.setAttribute("y", rowIndex * squareSize);
+
+            square.setAttribute("width", squareSize);
+            square.setAttribute("height", squareSize);
+
+            square.setAttribute("fill", stitches[stitch.type].color);
+            square.setAttribute("stroke", "#555");
+
+            svg.appendChild(square);
         }
-
-        container.appendChild(rowElement);
     }
+        svg.setAttribute("width",
+            Math.max(...project.rows.map(row => row.stitches.length)) * squareSize);
+
+        svg.setAttribute("height",
+            project.rows.length * squareSize);
 }
