@@ -5,9 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="416c9bec-9cdb-4058-a2f2-884c5a725174" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Chain.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/ChainLink.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Do_Instruction.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Hook.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/InsertionPoint.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Loop.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Pattern.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Row.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Space.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Stitch.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Front/src/Convert/Turn.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/Grid.html" beforeDir="false" afterPath="$PROJECT_DIR$/Front/Grid.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/parser.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/parser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/parser.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Convert/parser.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +28,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -36,26 +47,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "javascript.preferred.runtime.type.id": "node",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Front/src/Convert" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -71,7 +87,8 @@
       <option name="presentableId" value="Default" />
       <updated>1788111982677</updated>
       <workItem from="1788111984003" duration="14460000" />
-      <workItem from="1788878314043" duration="6578000" />
+      <workItem from="1788878314043" duration="9473000" />
+      <workItem from="1789873870395" duration="22736000" />
     </task>
     <servers />
   </component>
