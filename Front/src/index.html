@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="module" src="./Visualizer.js"></script>
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Crochet Visualizer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 20px;
+            color: #303047;
+            background: #faf8fc;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+
+        p {
+            color: #77738A;
+            font-size: 0.9rem;
+        }
+
+        .pattern-entry {
+            margin: 18px 0;
+            max-width: 650px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1px solid #e5dfee;
+            border-radius: 8px;
+            font: 14px monospace;
+            resize: vertical;
+        }
+
+        button {
+            margin: 8px 6px 8px 0;
+            padding: 8px 13px;
+            border: 1px solid #ddd3ea;
+            border-radius: 7px;
+            background: white;
+            color: #49415e;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #f0eafa;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 210px;
+            gap: 14px;
+            align-items: start;
+        }
+
+        .visual-area {
+            min-width: 0;
+            padding: 10px;
+            background: white;
+            border: 1px solid #e5dfee;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: white;
+        }
+
+        .info {
+            background: white;
+            border: 1px solid #e5dfee;
+            border-radius: 10px;
+            padding: 12px;
+            align-self: start;
+            overflow-wrap: anywhere;
+            min-width: 0;
+        }
+
+        .info h3 {
+            font-size: 0.95rem;
+            margin-top: 0;
+        }
+
+        .info pre {
+            font-size: 10px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .controls {
+            margin: 10px 0;
+        }
+
+        #error-message {
+            color: #b42318;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                margin: 12px;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Crochet Visualizer</h1>
+
+<p>
+    Enter a crochet pattern and explore its
+    individual structural components.
+</p>
+
+<section class="pattern-entry">
+
+    <label for="pattern-input">
+        <strong>Crochet pattern</strong>
+    </label>
+
+    <textarea id="pattern-input">6 sc
+6 sc</textarea>
+
+    <div class="controls">
+        <button id="build">
+            Build visualization
+        </button>
+
+        <button id="play">
+            Crochet row
+        </button>
+
+        <button id="reset">
+            Reset
+        </button>
+    </div>
+
+    <p id="error-message"></p>
+
+</section>
+
+<div class="layout">
+
+    <div class="visual-area">
+
+        <svg
+                id="crochet-graph"
+                viewBox="0 0 400 200"
+                role="img"
+                aria-label="Interactive crochet stitch visualization">
+
+        </svg>
+
+    </div>
+
+    <aside class="info" id="crochet-inspector">
+
+        <h3 id="inspector-title">
+            Stitch inspector
+        </h3>
+
+        <pre id="inspector-content">Hover over a crochet component to inspect it.</pre>
+
+    </aside>
+
+</div>
+
+
+
+</body>
+</html>
