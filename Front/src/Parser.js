@@ -15,6 +15,12 @@ function parseInstruction(inn){
 
     const type = parseWord(inn);
 
+    if (!type) {
+        throw new Error(
+            `Expected a stitch type at position ${inn.pos}.`
+        );
+    }
+
     if(!Object.hasOwn(STITCH_TYPES, type)) {
         throw new Error (`Unsupported type ${type}`);
     }
@@ -27,9 +33,9 @@ function parseInstruction(inn){
             throw new Error(`${modifierType} is not supported`);
         }
 
-        const modifierCount = parseNumber(inn) ?? 1;
+        const modifierCount = parseNumber(inn);
 
-        if (modifierCount < 2 || modifierCount > 3){
+        if (modifierCount === null || modifierCount < 2 || modifierCount > 3){
             throw new Error ("Modifier count must be 2 or 3.");
         }
 
@@ -51,15 +57,12 @@ function parseInstruction(inn){
 
 //-------------------------------------------PARSE PATTERN-------------------------------------------------
 function parseRow(inn) {
-    const pattern = [];
+    const instructions = [];
 
     skipWhitespace(inn);
 
     while (!inn.eof()) {
-        const instruction = parseInstruction(inn);
-
-        pattern.push(instruction);
-
+        instructions.push(parseInstruction(inn));
         skipWhitespace(inn);
 
         if(inn.eof()) break;
@@ -77,7 +80,7 @@ function parseRow(inn) {
         }
     }
 
-    return pattern;
+    return instructions;
 }
 
 
@@ -90,7 +93,7 @@ export function parsePattern(text) {
 
     const lines = text
         .split(/\r?\n/)
-        .map(line => line.trim())
+        .map(line => removeRowLabel(line).trim())
         .filter(Boolean);
 
     if (lines.length === 0) {
@@ -110,3 +113,8 @@ export function parsePattern(text) {
     });
 }
 
+function removeRowLabel(line){
+    return line.replace(
+        /^\s*(?:row|round)\s+\d+\s*:\s*/i, ""
+    );
+}

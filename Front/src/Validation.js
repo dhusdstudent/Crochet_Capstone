@@ -1,6 +1,49 @@
 import {STITCH_TYPES} from "./StitchTypes.js";
 import {CrochetProject} from "./Pattern.js";
 
+function validateAttachment(point, knownStitches){
+    if (
+        point.used !== (point.children.length > 0)
+    ) {
+        throw new Error(
+            `Attachment ${point.id} has inconsistent usage state.`
+        );
+    }
+
+    if (point.children.length > 3) {
+        throw new Error(
+            `Attachment ${point.id} has too many children.`
+        );
+    }
+
+    if (
+        new Set(point.children).size !==
+        point.children.length
+    ) {
+        throw new Error(
+            `Attachment ${point.id} contains duplicate children.`
+        );
+    }
+
+    for (const child of point.children) {
+        if (!knownStitches.has(child)) {
+            throw new Error(
+                `Attachment ${point.id} references an unknown stitch.`
+            );
+        }
+
+        if (
+            child.parent !== point.owner ||
+            child.origin !== point
+        ) {
+            throw new Error(
+                `Broken attachment relationship at ${point.id}.`
+            );
+        }
+    }
+}
+
+
 export function validateProject(project) {
     if (!(project instanceof CrochetProject)) {
         throw new Error(
@@ -47,6 +90,16 @@ export function validateProject(project) {
         for (let i = 0; i < row.stitches.length; i++) {
             const stitch = row.stitches[i];
 
+            validateAttachment(
+                stitch.insertionPoint,
+                knownStitches,
+            );
+
+            validateAttachment(
+                stitch.space,
+                knownStitches,
+            );
+
             if (stitch.row !== row) {
                 throw new Error(
                     "Stitch belongs to the wrong row."
@@ -78,6 +131,14 @@ export function validateProject(project) {
                     "Stitch height does not match its definition."
                 );
             }
+        }
+    }
+
+//-----------------------------FOUNDATION POINTS--------------------------------
+
+    for (const chain of project.chains){
+        for (const link of chain.links) {
+            validateAttachment(link.insertionPoint, knownStitches);
         }
     }
 
@@ -141,25 +202,37 @@ export function validateProject(project) {
 
 //-----------------------------VALID PARENTS--------------------------------
 
-        if (stitch.parent && !knownStitches.has(stitch.parent)) {
-            throw new Error(
-                "Stitch references an unknown parent."
-            );
+
+        if (stitch.parent) {
+            const isStitchParent =
+                knownStitches.has(stitch.parent);
+
+            const isChainLinkParent =
+                project.chains.some(chain =>
+                    chain.links.includes(stitch.parent)
+                );
+
+            if (!isStitchParent && !isChainLinkParent) {
+                throw new Error(
+                    `Stitch ${stitch.id} has an unknown parent.`
+                );
+            }
         }
 
         if (stitch.origin) {
             if (stitch.origin.owner !== stitch.parent) {
                 throw new Error(
-                    "Stitch origin and parent disagree."
+                    `Stitch ${stitch.id} has an inconsistent origin.`
                 );
             }
 
             if (!stitch.origin.children.includes(stitch)) {
                 throw new Error(
-                    "Stitch is missing from its origin's children."
+                    `Stitch ${stitch.id} is missing from its origin.`
                 );
             }
         }
+
 
 //-----------------------------VALID DECREASES--------------------------------
 
@@ -193,7 +266,7 @@ export function validateProject(project) {
                 );
             }
 
-            if (source.row.number >= stitch.row.number) {
+            if (source.row.number !== stitch.row.number - 1) {
                 throw new Error(
                     "A decrease source must belong to an earlier row."
                 );
@@ -237,6 +310,20 @@ export function validateProject(project) {
 
         for (let i = 0; i < chain.links.length; i++) {
             const link = chain.links[i];
+
+            if (!link.insertionPoint) {
+                throw new Error(
+                    `Chain link ${link.id} has no insertion point.`
+                );
+            }
+
+            if (chain.kind === "turning" && chain.row){
+                if (chain.row.turningChain !== chain) {
+                    throw new Error(
+                        "Turning chain and row references disagree."
+                    );
+                }
+            }
 
             if (link.chain !== chain) {
                 throw new Error(

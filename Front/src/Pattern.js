@@ -45,6 +45,22 @@ export class CrochetProject {
         return turn;
     }
 
+    addFoundationChain(count){
+        if (this.rows.length > 0) {
+            throw new Error(
+                "Foundation chain must be created before the first row."
+            );
+        }
+
+        if (this.chains.some(chain => chain.kind === "foundation")){
+            throw new Error(
+                "A foundation chain already exists."
+            );
+        }
+
+        return this.addChain("foundation", null, count);
+    }
+
     get currentRows() {
         return this.rows.at(-1) ?? null;
     }

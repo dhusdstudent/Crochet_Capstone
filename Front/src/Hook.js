@@ -11,24 +11,33 @@ export class Hook {
 
         this.record("start", {
             loopId: initialLoop.id,
-            loopCount: this.loopCount
+           // loopCount: this.loopCount
         });
     }
 
     record(type, data = {}){
-        this.ops.push({type, ...data});
+        this.ops.push({type, ...data,
+
+        hookState: this.loops.map(loop => ({
+            id: loop.id,
+            kind: loop.kind,
+            side: loop.side
+        })),
+            loopCount: this.loopCount
+        });
     }
 
     addLoop(kind, side) {
         const loop = new Loop(kind, side);
         loop.isOnHook = true;
+
         this.loops.push(loop);
 
         this.record("addLoop", {
             loopId: loop.id,
             kind,
-            side,
-            loopCount: this.loopCount
+            side
+            //loopCount: this.loopCount
         });
 
         return loop;
@@ -49,21 +58,19 @@ export class Hook {
     pullThrough(count){
         if (!Number.isInteger(count) || count < 2 || count > this.loops.length){
             throw new Error(
-                "Not enough to pull through"
+                `Can't pull through ${count}. ` +
+                `Current hook count: ${this.loopCount}.`
             );
         }
 
         const start = this.loops.length - count;
 
         const removed = this.loops.slice(
-            start,
-            this.loops.length);
+            start, count);
 
         for (const loop of removed){
             loop.isOnHook = false;
         }
-
-        this.loops.splice(start, count);
 
         const result = new Loop("working", "right");
         result.isOnHook = true;
@@ -73,8 +80,8 @@ export class Hook {
         this.record("pullThrough", {
             count,
             removed: removed.map(loop => loop.id),
-            resultLoopId: result.id,
-            loopCount: this.loopCount
+            resultLoopId: result.id
+            //loopCount: this.loopCount
         });
 
         return result;

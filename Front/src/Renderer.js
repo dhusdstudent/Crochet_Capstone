@@ -1,5 +1,58 @@
 import {validateProject} from "./Validation.js";
 
+
+function inspectInsertionPoint(point){
+    return {
+        id: point.id,
+        kind: "insertion point",
+        owner: point.owner.id,
+        used: point.used,
+        children: point.children.map( child => child.id),
+        canAcceptOne: point.canAccept(1),
+        canAcceptTwo: point.canAccept(2),
+        canAcceptThree: point.canAccept(3),
+    };
+}
+
+//---------------------------------------------------------------------------
+
+function inspectSpace(space){
+    return {
+        id: space.id,
+        kind: "space",
+        owner: space.owner.id,
+        precedingStitchType: space.owner.type,
+        used: space.used,
+        canBeUsed: space.canBeUsed,
+        children: space.children.map( child => child.id),
+    };
+}
+
+//---------------------------------------------------------------------------
+
+function inspectLoop(loop, stitch){
+    return{
+        id: loop.id,
+        kind: loop.kind,
+        side: loop.side,
+        isOnHook: loop.isOnHook,
+        stitch: stitch.id
+    };
+}
+
+//---------------------------------------------------------------------------
+
+export function inspectPost(post){
+    return {
+        id: post.id,
+        kind: "post",
+        stitch: post.stitch.id,
+        height: post.height
+    };
+}
+
+//---------------------------------------------------------------------------
+
 function inspectStitch(stitch) {
     return {
         id: stitch.id,
@@ -16,7 +69,12 @@ function inspectStitch(stitch) {
         space: inspectSpace(stitch.space),
         loops: stitch.top.loops.map(loop =>
             inspectLoop(loop, stitch)
-        )
+        ),
+
+        decreaseSources:
+            stitch.decreaseSources.map(source => source.id),
+
+        consumedBy: stitch.consumedBy?.id ?? null
     };
 }
 
@@ -286,7 +344,13 @@ export function doRender(project) {
     //-------------------------STITCH RENDER--------------------------------
 
     function drawStitch(stitch, rowIndex, stitchIndex) {
-        const x = padding + stitchIndex * cellWidth + cellWidth / 2;
+        const row = project.rows[rowIndex];
+
+        const x =
+            getRowStartX(row) +
+            stitchIndex * cellWidth +
+            cellWidth / 2;
+
         const yBase = getRowBase(rowIndex);
 
         const postHeight = Math.max(
@@ -393,14 +457,19 @@ export function doRender(project) {
         );
     }
 
+
     function drawChains() {
         for (const chain of project.chains) {
+
+            // FOUNDATION
             if (chain.kind === "foundation") {
                 const y = height - padding / 2;
 
                 chain.links.forEach((link, index) => {
                     const x =
-                        padding + index * cellWidth + cellWidth / 2;
+                        padding +
+                        index * cellWidth +
+                        cellWidth / 2;
 
                     drawChainLink(link, x, y);
                 });
@@ -408,31 +477,69 @@ export function doRender(project) {
                 continue;
             }
 
-            if (chain.kind === "turning" && chain.row) {
+            // TURNING
+            if (
+                chain.kind === "turning" &&
+                chain.row
+            ) {
                 const rowIndex = chain.row.number;
 
                 if (rowIndex === 0) {
                     continue;
                 }
 
-                const currentBase = getRowBase(rowIndex);
-                const previousBase = getRowBase(rowIndex - 1);
+                const currentBase =
+                    getRowBase(rowIndex);
 
-                const x = padding - 12;
+                const previousBase =
+                    getRowBase(rowIndex - 1);
+
+                const x = getRowStartX(chain.row) - 12;
 
                 chain.links.forEach((link, index) => {
                     const fraction =
-                        (index + 1) / (chain.links.length + 1);
+                        (index + 1) /
+                        (chain.links.length + 1);
 
                     const y =
                         currentBase +
-                        (previousBase - currentBase) * fraction;
+                        (previousBase - currentBase) *
+                        fraction;
 
                     drawChainLink(link, x, y, true);
+                });
+
+                continue;
+            }
+
+            // ADDITIONAL
+            if (
+                chain.kind === "additional" &&
+                chain.row
+            ) {
+                const rowIndex = chain.row.number;
+                const row = chain.row;
+
+                const base = getRowBase(rowIndex);
+
+                const startX = getRowStartX(row);
+
+                chain.links.forEach((link, index) => {
+                    const x =
+                        startX +
+                        index * cellWidth +
+                        cellWidth / 2;
+
+                    drawChainLink(
+                        link,
+                        x,
+                        base + 22
+                    );
                 });
             }
         }
     }
+
 
     //-------------------------LABELS--------------------------------
 
@@ -469,6 +576,7 @@ export function doRender(project) {
 
     //-------------------------ANIMATE--------------------------------
 
+
     return {
         revealStitches(delay = 250) {
             this.reset();
@@ -483,7 +591,10 @@ export function doRender(project) {
         },
 
         reset() {
-            animationTimers.forEach(clearTimeout);
+            animationTimers.forEach(timer => {
+                clearTimeout(timer);
+            });
+
             animationTimers.length = 0;
 
             drawGroups.forEach(group => {
@@ -494,6 +605,25 @@ export function doRender(project) {
                 "Stitch inspector",
                 "Hover over a crochet component to inspect it."
             );
+        },
+
+        showAll() {
+            this.reset();
+
+            drawGroups.forEach(group => {
+                group.style.opacity = "1";
+            });
         }
     };
+
+
+    function getRowStartX(row) {
+        const maxStitches = Math.max(
+            1,
+            ...project.rows.map(r => r.stitches.length)
+        );
+
+        return padding +
+            ((maxStitches - row.stitches.length) * cellWidth) / 2;
+    }
 }

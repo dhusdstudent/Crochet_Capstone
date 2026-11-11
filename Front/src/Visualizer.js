@@ -7,82 +7,53 @@ const patternText = `
 4 sc
 `;
 
-const project = buildProject(patternText);
+document.addEventListener("DOMContentLoaded", () => {
+    const patternInput = document.getElementById("pattern-input");
 
-const visualizer = doRender(project);
+    const errorMessage = document.getElementById("error-message");
+    const buildButton = document.getElementById("build");
 
-const playButton = document.getElementById("crochet-play");
+    const playButton = document.getElementById("play");
+    const resetButton = document.getElementById("reset");
 
-if (playButton) {
-    playButton.addEventListener("click", () => {
-        visualizer.reset();
-        visualizer.revealStitches(450);
-    });
-}
+    let currentProject = null;
+    let visualizer = null;
 
-const resetButton = document.getElementById("crochet-reset");
+    function buildVisualization() {
+        try {
+            errorMessage.textContent = "";
 
-if (resetButton) {
-    resetButton.addEventListener("click", () => {
-        visualizer.reset();
-    });
-}
+            const project = buildProject(
+                patternInput.value
+            );
 
-document.addEventListener('DOMContentLoaded', () => {
+            const nextVisualizer = doRender(project);
 
-
-const patternInput =
-    document.getElementById("pattern-input");
-
-const errorMessage =
-    document.getElementById("error-message");
-
-const inspector =
-    document.getElementById("crochet-inspector");
-
-let currentProject = null;
-let visual = null;
-
-function buildVisualization() {
-    try {
-        errorMessage.textContent = "";
-
-        currentProject = buildProject(
-            patternInput.value
-        );
-
-        visual = doRender(currentProject);
-
-    } catch (error) {
-        errorMessage.textContent = error.message;
-
-        console.error(error);
+            currentProject = project;
+            visualizer = nextVisualizer;
+        } catch (error){
+            errorMessage.textContent = error.message;
+            console.error(error);
+        }
     }
-}
 
-document
-    .getElementById("build")
-    .addEventListener("click", () => {
-        buildVisualization();
-    });
+    buildButton.addEventListener(
+        "click",
+        buildVisualization
+    );
 
-document
-    .getElementById("play")
-    .addEventListener("click", () => {
+    playButton.addEventListener("click", () => {
         if (!visualizer) return;
 
         visualizer.reset();
         visualizer.revealStitches(250);
     });
 
-document
-    .getElementById("reset")
-    .addEventListener("click", () => {
+    resetButton.addEventListener("click", () => {
         if (!visualizer) return;
 
         visualizer.reset();
     });
 
-buildVisualization();
-
-});
+    buildVisualization();
+})

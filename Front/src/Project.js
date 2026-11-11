@@ -3,9 +3,14 @@ import {doRender} from "./Renderer.js";
 import {validateProject} from "./Validation.js";
 import {interpretPattern} from "./Interpret.js";
 
-export function buildProject(text) {
+
+export function buildProject(text, options = {}) {
     const instructions = parsePattern(text);
-    const project = interpretPattern(instructions);
+
+    const project = interpretPattern(
+        instructions,
+        options
+    );
 
     validateProject(project);
 
@@ -14,7 +19,7 @@ export function buildProject(text) {
 
 //----------------------------------------------DISPLAY--------------------------------------------
 
-function displayProject(project){
+export function displayProject(project){
     validateProject(project);
     const visualizer = doRender(project);
 

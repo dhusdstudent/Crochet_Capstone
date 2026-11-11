@@ -4,10 +4,17 @@ import {createStitch} from "./Stitch.js";
 function createInterpretationContext(project, row){
     const previousRow = project.rows.at(-2) ?? null;
 
+    const foundationChain = previousRow
+        ? null
+        : project.chains.find(
+            chain => chain.kind === "foundation"
+        ) ?? null;
+
     return {
         project,
         row,
         previousRow,
+        foundationChain,
         targetIndex: 0
     };
 }
@@ -17,7 +24,8 @@ function createInterpretationContext(project, row){
 function interpretNormalStitches(context, type, count){
     const {
         row,
-        previousRow
+        previousRow,
+        foundationChain
     } = context;
 
     const stitches = [];
@@ -25,11 +33,17 @@ function interpretNormalStitches(context, type, count){
     for (let i = 0; i < count; i ++){
         const stitch = createStitch(row, type);
 
-        if (previousRow){
-            const target = previousRow.stitches[
+        let target = null;
+
+        if (previousRow) {
+            target = previousRow.stitches[
                 context.targetIndex
                 ];
+        } else if (foundationChain) {
+            target = foundationChain.links[context.targetIndex];
+        }
 
+        if (previousRow || foundationChain){
             if (!target){
                 throw new Error(
                     "Last row doesn't have enough stitches."
@@ -57,23 +71,18 @@ function interpretIncrease(context, type, count, amount = 2){
         );
     }
 
-    const {
-        row,
-        previousRow
-    } = context;
+    const {row, previousRow} = context;
 
     if(!previousRow){
         throw new Error(
-            "An increase needs an existing stitch."
+            "An increase needs an existing row."
         );
     }
 
     const results = [];
 
     for (let i = 0; i < count; i ++){
-        const target = previousRow.stitches[
-            context.targetIndex
-            ];
+        const target = previousRow.stitches[context.targetIndex];
 
         if (!target){
             throw new Error(
@@ -81,16 +90,21 @@ function interpretIncrease(context, type, count, amount = 2){
             );
         }
 
-        const children = [];
-
-        for (let j = 0; j < amount; j ++){
-            children.push(createStitch(row, type));
+        if(target.insertionPoint.used){
+            throw new Error(
+                `Stitch ${target.id} has already been worked into.`
+            );
         }
+
+        const children = Array.from(
+            {length: amount},
+            () => createStitch(row, type)
+        );
 
         target.insertionPoint.attach(children);
 
-        for (const stitch of children){
-            row.addStitch(stitch);
+        for (const child of children){
+            row.addStitch(child);
         }
 
         results.push(...children);
@@ -110,10 +124,7 @@ function interpretDecrease(context, type, count, amount = 3){
         );
     }
 
-    const {
-        row,
-        previousRow
-    } = context;
+    const {row, previousRow} = context;
 
     if (!previousRow){
         throw new Error(
@@ -122,10 +133,13 @@ function interpretDecrease(context, type, count, amount = 3){
     }
 
     const results = [];
+
     for (let i = 0; i < count; i ++){
+        const start = context.targetIndex;
+
         const sources = previousRow.stitches.slice(
-            context.targetIndex,
-            context.targetIndex + amount
+            start,
+            start + amount
         );
 
         if (sources.length !== amount){
@@ -134,10 +148,23 @@ function interpretDecrease(context, type, count, amount = 3){
             );
         }
 
-        if (sources.some(source => source.consumedBy)){
-            throw new Error(
-                "A stitch has already been consumed."
-            );
+        for (let j = 0; j < sources.length; j ++) {
+            const source = sources[j];
+            if (source.consumedBy) {
+                throw new Error(
+                    "A stitch has already been consumed."
+                );
+            }
+
+            if (j > 0) {
+                const previousSource = sources[j - 1];
+
+                if (source.previous !== previousSource) {
+                    throw new Error(
+                        "Decrease sources must be consecutive."
+                    );
+                }
+            }
         }
 
         const stitch = createStitch(row, type);
@@ -247,8 +274,16 @@ function interpretTurn(project, fromRow, toRow, stitchType){
 
 //-----------------------------------------------------------------------
 
-export function interpretPattern(instructions){
+export function interpretPattern(
+    instructions,
+    options = {}
+){
     const project = new CrochetProject();
+    const foundationCount = options.foundationCount ?? 0;
+
+    if (foundationCount > 0){
+        project.addFoundationChain(foundationCount);
+    }
 
     for (let i = 0; i < instructions.length; i++){
         const rowInstructions = instructions[i];

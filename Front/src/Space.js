@@ -7,8 +7,6 @@ export class Space{
         this.id = makeId("space");
 
         this.owner = owner;
-        this.value = owner;
-
         this.children = [];
         this.used = false;
     }
@@ -45,6 +43,10 @@ export class Space{
 
             if (child === this.owner){
                 throw new Error("A stitch cannot be its own child.")
+            }
+
+            if (child.row.number <= this.owner.row.number){
+                throw new Error("A stitch must attach to an earlier row.");
             }
         }
 

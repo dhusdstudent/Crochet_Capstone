@@ -49,8 +49,7 @@ export class Stitch {
     }
 
     build() {
-        const definition = STITCH_TYPES[this.type];
-        const recipe = definition.construction;
+        const recipe = STITCH_TYPES[this.type].construction;
 
         if (recipe.special){
             this.construction = [{
@@ -73,6 +72,13 @@ export class Stitch {
 
         for (const count of recipe.pullThrough){
             hook.pullThrough(count);
+        }
+
+        if (hook.loopCount !== 1){
+            throw new Error(
+                `Invalid construction for ${this.type}: ` +
+                `expected 1 working loop, got ${hook.loopCount}.`
+            );
         }
 
         this.construction = [...hook.ops];

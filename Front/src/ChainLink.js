@@ -17,4 +17,8 @@ export class ChainLink {
         this.front = new Loop("front");
         this.back = new Loop("back");
     }
+
+    get row(){
+        return this.chain.row;
+    }
 }
