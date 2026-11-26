@@ -6,19 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="416c9bec-9cdb-4058-a2f2-884c5a725174" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/ChainLink.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/ChainLink.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/Chain.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Chain.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/Hook.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Hook.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/InsertionPoint.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/InsertionPoint.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/Inspect.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/Interpret.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Interpret.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/Parser.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Parser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/Pattern.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Pattern.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/Project.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Project.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/Renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Renderer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/Space.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Space.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/Stitch.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Stitch.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/Validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Validation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/Visualizer.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/Visualizer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/untitled/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/untitled/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/untitled/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/untitled/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/untitled/untitled.iml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +106,9 @@
       <workItem from="1792785699229" duration="2307000" />
       <workItem from="1793128762341" duration="10602000" />
       <workItem from="1793398953674" duration="35176000" />
-      <workItem from="1794344666339" duration="9043000" />
+      <workItem from="1794344666339" duration="16820000" />
+      <workItem from="1794528718079" duration="3476000" />
+      <workItem from="1795197476816" duration="2511000" />
     </task>
     <servers />
   </component>

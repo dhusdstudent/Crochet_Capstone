@@ -65,7 +65,7 @@ export class Hook {
 
         const start = this.loops.length - count;
 
-        const removed = this.loops.slice(
+        const removed = this.loops.splice(
             start, count);
 
         for (const loop of removed){

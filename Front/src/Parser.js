@@ -5,6 +5,23 @@ import {STITCH_TYPES} from "./StitchTypes.js";
 //-------------------------------------------PARSE WHOLE INST-------------------------------------------------
 const MODIFIERS = new Set (["tog", "inc"]);
 
+const MODIFIER_ALIASES = {
+    inc: "inc",
+    increase: "inc",
+    increases: "inc",
+    tog: "tog",
+    dec: "tog",
+    decrease: "tog",
+    decreases: "tog"
+};
+
+// incNstitch_type
+// stitch_typeNinc
+// stitch_typeNtog
+
+//-------------------------------------------PARSE WHOLE INST-------------------------------------------------
+
+
 function parseInstruction(inn){
     skipWhitespace(inn);
 

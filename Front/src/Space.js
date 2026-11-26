@@ -21,11 +21,11 @@ export class Space{
             : [stitches];
 
         if (!this.canBeUsed) {
-            throw new Error(`Cannot attach stitch: ${stitches}`);
+            throw new Error(`Space ${this.id} cannot accept stitches.`);
         }
 
         if (children.length < 1 || children.length > 3){
-            throw new Error("Stitch ${stitch} is already attached.");
+            throw new Error(`A space must receive between 1 and 3 stitches.`);
         }
 
         if (new Set(children).size !== children.length) {

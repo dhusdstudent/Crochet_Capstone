@@ -31,6 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             currentProject = project;
             visualizer = nextVisualizer;
+
+            visualizer.revealNextRow(0);
+
         } catch (error){
             errorMessage.textContent = error.message;
             console.error(error);
@@ -45,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     playButton.addEventListener("click", () => {
         if (!visualizer) return;
 
-        visualizer.reset();
         visualizer.revealStitches(250);
     });
 
@@ -53,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!visualizer) return;
 
         visualizer.reset();
+        visualizer.revealNextRow(0);
     });
 
     buildVisualization();

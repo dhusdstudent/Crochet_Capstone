@@ -7,9 +7,34 @@ import {interpretPattern} from "./Interpret.js";
 export function buildProject(text, options = {}) {
     const instructions = parsePattern(text);
 
+    const firstRowCount = instructions[0].reduce(
+        (total, instruction) => {
+            if (instruction.type === "ch") {
+                return total;
+            }
+
+            if (instruction.modifier?.type === "inc") {
+                return total +
+                    instruction.count * instruction.modifier.count;
+            }
+
+            if (instruction.modifier?.type === "tog") {
+                return total + instruction.count;
+            }
+
+            return total + instruction.count;
+        },
+        0
+    );
+
+    const foundationCount = options.foundation ?? firstRowCount;
+
     const project = interpretPattern(
         instructions,
-        options
+        {
+        ...options,
+        foundationCount
+        }
     );
 
     validateProject(project);

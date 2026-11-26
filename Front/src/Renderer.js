@@ -123,6 +123,11 @@ export function doRender(project) {
     const drawGroups = [];
     const animationTimers = [];
 
+    const rowGroups = project.rows.map(() => []);
+    const chainGroups = project.rows.map(() => []);
+
+    let revealedRows =0;
+
  //-------------------------SVG HELPERS--------------------------------
 
     function makeElement(name, attrs = {}) {
@@ -159,9 +164,17 @@ export function doRender(project) {
 
         node.style.cursor = "help";
 
-        node.addEventListener("mouseenter", () => {
-            inspect(kind, details());
+        node.addEventListener("pointerenter", () => {
+            clearTimeout(hoverTimer);
+
+            hoverTimer = setTimeout(() => {
+                inspect(kind, details());
+            }, 45);
         });
+
+        node.addEventListener("pointerleave", () => {
+            clearTimeout(hoverTimer);
+        })
     }
 
     function getRowBase(rowIndex) {
@@ -172,21 +185,31 @@ export function doRender(project) {
         );
     }
 
+    function getRowStartX(row) {
+        const maxStitches = Math.max(
+            1,
+            ...project.rows.map(r => r.stitches.length)
+        );
+
+        return padding +
+            ((maxStitches - row.stitches.length) * cellWidth) / 2;
+    }
+
 //-------------------------MAKE HELIX--------------------------------
 
     function strandCount(type) {
         switch (type) {
             case "dc":
-                return 2;
+                return 1;
 
             case "tr":
-                return 3;
+                return 2;
 
             case "dtr":
-                return 4;
+                return 3;
 
             default:
-                return 1;
+                return .5;
         }
     }
 
@@ -346,9 +369,13 @@ export function doRender(project) {
     function drawStitch(stitch, rowIndex, stitchIndex) {
         const row = project.rows[rowIndex];
 
+        const visualIndex = rowIndex % 2 === 0
+            ? stitchIndex
+            : row.stitches.length - 1 - stitchIndex;
+
         const x =
             getRowStartX(row) +
-            stitchIndex * cellWidth +
+            visualIndex * cellWidth +
             cellWidth / 2;
 
         const yBase = getRowBase(rowIndex);
@@ -369,6 +396,7 @@ export function doRender(project) {
         group.style.transition = "opacity 300ms ease";
 
         drawGroups.push(group);
+        rowGroups[rowIndex].push(group);
 
         drawHelicalPost(
             group,
@@ -432,6 +460,12 @@ export function doRender(project) {
             "data-chain-link-id": link.id
         });
 
+        group.style.opacity = "0";
+        group.style.transition = "opacity 300ms ease";
+
+        const rowIndex = link.chain.row?.number ?? 0;
+        chainGroups[rowIndex]?.push(group);
+
         const linkElement = add(group, "ellipse", {
             cx: x,
             cy: y,
@@ -494,7 +528,10 @@ export function doRender(project) {
                 const previousBase =
                     getRowBase(rowIndex - 1);
 
-                const x = getRowStartX(chain.row) - 12;
+                const x = rowIndex % 2 === 0
+                    ? getRowStartX(chain.row) - 12
+                    : getRowStartX(chain.row) +
+                        chain.row.stitches.length * cellWidth + 12;
 
                 chain.links.forEach((link, index) => {
                     const fraction =
@@ -576,18 +613,40 @@ export function doRender(project) {
 
     //-------------------------ANIMATE--------------------------------
 
+    let hoverTimer = null;
+    let scheduledGroups = 0;
 
     return {
-        revealStitches(delay = 250) {
-            this.reset();
+        revealNextRow(delay = 250) {
+            if (revealedRows >= project.rows.length) {
+                return false;
+            }
 
-            drawGroups.forEach((group, index) => {
+            const rowIndex = revealedRows;
+            revealedRows++;
+
+            const groups = [
+                ...chainGroups[rowIndex],
+                ...rowGroups[rowIndex]
+            ];
+
+            groups.forEach((group, index) => {
                 const timer = setTimeout(() => {
                     group.style.opacity = "1";
-                }, index * delay);
+                }, (scheduledGroups + index) * delay);
 
                 animationTimers.push(timer);
             });
+
+            scheduledGroups += groups.length;
+            return true;
+        },
+
+        revealStitches(delay = 250) {
+            this.reset();
+
+            while (this.revealNextRow(delay)) {
+            }
         },
 
         reset() {
@@ -595,11 +654,28 @@ export function doRender(project) {
                 clearTimeout(timer);
             });
 
+            clearTimeout(hoverTimer);
+            scheduledGroups = 0;
+
             animationTimers.length = 0;
 
             drawGroups.forEach(group => {
                 group.style.opacity = "0";
             });
+
+            for (const groups of rowGroups) {
+                groups.forEach(group => {
+                    group.style.opacity = "0";
+                });
+            }
+
+            for (const groups of chainGroups) {
+                groups.forEach(group => {
+                    group.style.opacity = "0";
+                });
+            }
+
+            revealedRows = 0;
 
             inspect(
                 "Stitch inspector",
@@ -608,22 +684,29 @@ export function doRender(project) {
         },
 
         showAll() {
-            this.reset();
+            animationTimers.forEach(timer => {
+                clearTimeout(timer);
+            });
+
+            animationTimers.length = 0;
 
             drawGroups.forEach(group => {
                 group.style.opacity = "1";
             });
+
+            for (const groups of rowGroups) {
+                groups.forEach(group => {
+                    group.style.opacity = "1";
+                });
+            }
+
+            for (const groups of chainGroups) {
+                groups.forEach(group => {
+                    group.style.opacity = "1";
+                });
+            }
+
+            revealedRows = project.rows.length;
         }
     };
-
-
-    function getRowStartX(row) {
-        const maxStitches = Math.max(
-            1,
-            ...project.rows.map(r => r.stitches.length)
-        );
-
-        return padding +
-            ((maxStitches - row.stitches.length) * cellWidth) / 2;
-    }
 }

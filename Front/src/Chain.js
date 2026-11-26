@@ -26,7 +26,7 @@ export class Chain{
 
     addLinks(count){
         if (!Number.isInteger(count) || count < 0){
-            throw new Error("Chain count can't be negative.")
+            throw new Error("Chain count must be a non-negative integer.");
         }
 
         for (let i = 0; i < count; i++){
